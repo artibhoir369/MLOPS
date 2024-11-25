@@ -30,7 +30,6 @@ pipeline {
             }
         }
 
-
         stage('Build Docker Image') {
             steps {
                 // Build the Docker image from the Dockerfile
@@ -49,6 +48,7 @@ pipeline {
                         // Log in to Docker registry using the credentials
                         sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin ${REGISTRY}"
                         sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    }
                 }
             }
         }
