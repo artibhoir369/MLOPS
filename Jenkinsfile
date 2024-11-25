@@ -17,9 +17,19 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 // Clone your repository containing model files
-                git branch: 'main', url: 'https://github.com/your-repo.git'
+                git branch: 'main', url: 'https://github.com/artibhoir369/MLOPS.git'
             }
         }
+        
+        stage('Train Model') {
+            steps {
+                // Run model training (if needed)
+                script {
+                    sh "python ${TRAIN_SCRIPT}"
+                }
+            }
+        }
+
 
         stage('Build Docker Image') {
             steps {
@@ -34,7 +44,11 @@ pipeline {
             steps {
                 // Push the image to Docker registry
                 script {
-                    sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    // Use withCredentials to securely pass the Docker registry credentials
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Log in to Docker registry using the credentials
+                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin ${REGISTRY}"
+                        sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
@@ -53,15 +67,6 @@ pipeline {
                 // Run tests on the deployed model
                 script {
                     sh "python ${TEST_SCRIPT}"
-                }
-            }
-        }
-
-        stage('Train Model') {
-            steps {
-                // Run model training (if needed)
-                script {
-                    sh "python ${TRAIN_SCRIPT}"
                 }
             }
         }
