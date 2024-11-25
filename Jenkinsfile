@@ -9,7 +9,7 @@ pipeline {
         REGISTRY = 'docker.io'
         DEPLOYMENT_YAML = 'model-serving-deployment.yaml'
         TEST_SCRIPT = 'test_model.py'
-        TRAIN_SCRIPT = 'train_model.py'
+        TRAIN_SCRIPT = 'train.py'
         DOCKERFILE = 'Dockerfile'
     }
 
